@@ -5,23 +5,6 @@
 
 set -e
 
-echo "##### Installing tflint tool #####"
-if ! command -v tflint &>/dev/null; then
-    echo "tflint could not be found"
-    echo "installing it..."
-    if [[ "$(uname)" == "Darwin" ]]; then
-        brew install tflint
-    else # Assume Linux
-        wget https://raw.githubusercontent.com/terraform-linters/tflint/21a0c1c86c5aa0e3e95916e6e25ded69efcf13f3/install_linux.sh
-        sha=$(shasum -a 256 install_linux.sh | awk '{ print $1 }')
-        [ "$sha" != "54e1b264b0f4b3e183d873273d5ee2053c80222a4422eea0b35d2e88114fbff9" ] && echo "shasum mismatch" && exit 1
-        chmod +x install_linux.sh
-        ./install_linux.sh
-    fi
-else
-    echo "tflint already installed"
-fi
-
 echo "##### Terraform version #####"
 terraform version
 
@@ -46,11 +29,28 @@ for dir in ${tf_dirs[@]}; do
     cd $base_dir
 done
 
-# Run tflint
-echo "##### tflint #####"
-base_dir=$(pwd)
-tflint --init --config="${base_dir}/terraform/.tflint.hcl"
-for dir in ${tf_dirs[@]}; do
-    echo "Linting $dir"
-    tflint --config="${base_dir}/terraform/.tflint.hcl" --var-file="${base_dir}/terraform/tflint.tfvars" $dir
-done
+# echo "##### Installing tflint tool #####"
+# if ! command -v tflint &>/dev/null; then
+#     echo "tflint could not be found"
+#     echo "installing it..."
+#     if [[ "$(uname)" == "Darwin" ]]; then
+#         brew install tflint
+#     else # Assume Linux
+#         wget https://raw.githubusercontent.com/terraform-linters/tflint/21a0c1c86c5aa0e3e95916e6e25ded69efcf13f3/install_linux.sh
+#         sha=$(shasum -a 256 install_linux.sh | awk '{ print $1 }')
+#         [ "$sha" != "54e1b264b0f4b3e183d873273d5ee2053c80222a4422eea0b35d2e88114fbff9" ] && echo "shasum mismatch" && exit 1
+#         chmod +x install_linux.sh
+#         ./install_linux.sh
+#     fi
+# else
+#     echo "tflint already installed"
+# fi
+# 
+# # Run tflint
+# echo "##### tflint #####"
+# base_dir=$(pwd)
+# tflint --init --config="${base_dir}/terraform/.tflint.hcl"
+# for dir in ${tf_dirs[@]}; do
+#     echo "Linting $dir"
+#     tflint --config="${base_dir}/terraform/.tflint.hcl" --var-file="${base_dir}/terraform/tflint.tfvars" $dir
+# done
