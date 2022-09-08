@@ -240,7 +240,7 @@ impl Mempool {
             }
         }
 
-        debug!(
+        warn!(
             LogSchema::new(LogEntry::GetBlock),
             seen_consensus = seen_size,
             walked = txn_walked,
