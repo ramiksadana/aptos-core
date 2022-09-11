@@ -7,7 +7,7 @@ use aptos_crypto::{hash::CryptoHash, HashValue};
 use aptos_infallible::Mutex;
 use aptos_jellyfish_merkle::{
     restore::JellyfishMerkleRestore,
-    IO_POOL, {Key, TreeReader, TreeWriter, Value},
+    {Key, TreeReader, TreeWriter, Value},
 };
 use aptos_types::state_store::state_storage_usage::StateStorageUsage;
 use aptos_types::{proof::SparseMerkleRangeProof, transaction::Version};
@@ -16,6 +16,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 use std::sync::Arc;
 use storage_interface::StateSnapshotReceiver;
+use storage_utils::async_at_most_one::AsyncAtMostOne;
 
 #[cfg(test)]
 mod restore_test;
@@ -61,6 +62,9 @@ impl<K: Key + CryptoHash + Eq + Hash, V: Value> StateValueRestore<K, V> {
     }
 
     pub fn add_chunk(&mut self, mut chunk: Vec<(K, V)>) -> Result<()> {
+        let _timer = OTHER_TIMERS_SECONDS
+            .with_label_values(&["state_value_add_chunk"])
+            .start_timer();
         // load progress
         let progress_opt = self.db.get_progress(self.version)?;
 
@@ -116,6 +120,7 @@ impl<K: Key + CryptoHash + Eq + Hash, V: Value> StateValueRestore<K, V> {
 pub struct StateSnapshotRestore<K, V> {
     tree_restore: Arc<Mutex<Option<JellyfishMerkleRestore<K>>>>,
     kv_restore: Arc<Mutex<Option<StateValueRestore<K, V>>>>,
+    async_runner: AsyncAtMostOne,
 }
 
 impl<K: Key + CryptoHash + Hash + Eq, V: Value> StateSnapshotRestore<K, V> {
@@ -137,6 +142,7 @@ impl<K: Key + CryptoHash + Hash + Eq, V: Value> StateSnapshotRestore<K, V> {
                 Arc::clone(value_store),
                 version,
             )))),
+            async_runner: AsyncAtMostOne::new("state_restore".to_owned()),
         })
     }
 
@@ -156,6 +162,7 @@ impl<K: Key + CryptoHash + Hash + Eq, V: Value> StateSnapshotRestore<K, V> {
                 Arc::clone(value_store),
                 version,
             )))),
+            async_runner: AsyncAtMostOne::new("state_restore_overwrite".to_owned()),
         })
     }
 
@@ -187,32 +194,29 @@ impl<K: Key + CryptoHash + Hash + Eq, V: Value> StateSnapshotReceiver<K, V>
         let _timer = OTHER_TIMERS_SECONDS
             .with_label_values(&["state_snapshot_add_chunk"])
             .start_timer();
-        // Write KV out first because we are likely to resume according to the rightmost key in the
-        // tree after crashing.
-        let (r1, r2) = IO_POOL.join(
-            || {
-                let _timer = OTHER_TIMERS_SECONDS
-                    .with_label_values(&["state_value_add_chunk"])
-                    .start_timer();
-                self.kv_restore
-                    .lock()
-                    .as_mut()
-                    .unwrap()
-                    .add_chunk(chunk.clone())
-            },
-            || {
-                let _timer = OTHER_TIMERS_SECONDS
-                    .with_label_values(&["jmt_add_chunk"])
-                    .start_timer();
-                self.tree_restore
-                    .lock()
-                    .as_mut()
-                    .unwrap()
-                    .add_chunk_impl(chunk.iter().map(|(k, v)| (k, v.hash())).collect(), proof)
-            },
-        );
-        r1?;
-        r2?;
+
+        // Run tree restore and value retore concurrently
+        // 1. spawn kv restore
+        let kv_restore = self.kv_restore.clone();
+        let chunk_clone = chunk.clone();
+        self.async_runner
+            .async_run(move || kv_restore.lock().as_mut().unwrap().add_chunk(chunk_clone))?;
+
+        // 2. do tree restore in place
+        {
+            let _timer = OTHER_TIMERS_SECONDS
+                .with_label_values(&["jmt_add_chunk"])
+                .start_timer();
+            self.tree_restore
+                .lock()
+                .as_mut()
+                .unwrap()
+                .add_chunk_impl(chunk.iter().map(|(k, v)| (k, v.hash())).collect(), proof)?;
+        }
+
+        // 3. join kv restore, raise for error.
+        self.async_runner.sync()?;
+
         Ok(())
     }
 

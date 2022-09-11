@@ -151,7 +151,7 @@ pub trait Key: Clone + Serialize + DeserializeOwned + Send + Sync + 'static {
 }
 
 /// `Value` defines the types of data that can be stored in a Jellyfish Merkle tree.
-pub trait Value: Clone + CryptoHash + Serialize + DeserializeOwned + Send + Sync {
+pub trait Value: Clone + CryptoHash + Serialize + DeserializeOwned + Send + Sync + 'static {
     fn value_size(&self) -> usize;
 }
 
@@ -159,14 +159,14 @@ pub trait Value: Clone + CryptoHash + Serialize + DeserializeOwned + Send + Sync
 /// tests.
 #[cfg(any(test, feature = "fuzzing"))]
 pub trait TestKey:
-    Key + Arbitrary + std::fmt::Debug + Eq + Hash + Ord + PartialOrd + PartialEq + 'static
+    Key + Arbitrary + std::fmt::Debug + Eq + Hash + Ord + PartialOrd + PartialEq
 {
 }
 
 /// `TestValue` defines the types of data that can be stored in a Jellyfish Merkle tree and used in
 /// tests.
 #[cfg(any(test, feature = "fuzzing"))]
-pub trait TestValue: Value + Arbitrary + std::fmt::Debug + Eq + PartialEq + 'static {}
+pub trait TestValue: Value + Arbitrary + std::fmt::Debug + Eq + PartialEq {}
 
 impl Key for StateKey {
     fn key_size(&self) -> usize {

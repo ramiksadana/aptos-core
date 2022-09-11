@@ -727,6 +727,7 @@ dependencies = [
  "rayon",
  "serde 1.0.144",
  "storage-interface",
+ "storage-utils",
  "thiserror",
 ]
 
@@ -1535,6 +1536,7 @@ dependencies = [
  "scratchpad",
  "serde 1.0.144",
  "storage-interface",
+ "storage-utils",
  "thiserror",
 ]
 
@@ -8879,6 +8881,14 @@ dependencies = [
  "proptest",
  "serde 1.0.144",
  "thiserror",
+]
+
+[[package]]
+name = "storage-utils"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "aptos-logger",
 ]
 
 [[package]]
