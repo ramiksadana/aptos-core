@@ -430,8 +430,8 @@ proptest! {
 
         restore.add_chunk(batch1, proof_of_batch1).unwrap();
 
-        let expected = store2.state_merkle_db.get_rightmost_leaf_naive().unwrap();
-        let actual = store2.state_merkle_db.get_rightmost_leaf().unwrap();
+        let expected = store2.state_merkle_db.get_rightmost_leaf_naive(version).unwrap();
+        let actual = store2.state_merkle_db.get_rightmost_leaf(version).unwrap();
         prop_assert_eq!(actual, expected);
     }
 
