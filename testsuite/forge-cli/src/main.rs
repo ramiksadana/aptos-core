@@ -186,9 +186,9 @@ fn main() -> Result<()> {
     let suite_name: &str = args.suite.as_ref();
 
     let suite_name = if suite_name == "compat" {
-        "failures_catching_up"
-    } else {
         "slow_processing_catching_up"
+    } else {
+        "failures_catching_up"
     };
 
     let duration = Duration::from_secs(1800);
@@ -662,10 +662,10 @@ fn single_test_suite(test_name: &str) -> Result<ForgeConfig<'static>> {
         "failures_catching_up" => changing_working_quorum_test(
             10,
             300,
-            4000,
-            3000,
+            2500,
+            2200,
             &ChangingWorkingQuorumTest {
-                min_tps: 2000,
+                min_tps: 1500,
                 always_healthy_nodes: 2,
                 max_down_nodes: 1,
                 num_large_validators: 2,
