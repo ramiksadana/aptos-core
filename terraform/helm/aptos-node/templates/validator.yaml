@@ -38,6 +38,9 @@ spec:
   resources:
     requests:
       storage: {{ $.Values.validator.storage.size }}
+  selector:
+    matchLabels:
+      {{- toYaml $.Values.validator.storage.labels | nindent 6}}
 
 ---
 

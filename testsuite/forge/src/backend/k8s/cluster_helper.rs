@@ -11,13 +11,13 @@ use crate::{
     VALIDATOR_HAPROXY_SERVICE_SUFFIX, VALIDATOR_SERVICE_SUFFIX,
 };
 use again::RetryPolicy;
-use anyhow::{bail, format_err};
+use anyhow::{anyhow, bail, format_err};
 use aptos_logger::info;
 use aptos_sdk::types::PeerId;
 use k8s_openapi::api::{
     apps::v1::{Deployment, StatefulSet},
     batch::{v1::Job, v1beta1::CronJob},
-    core::v1::{ConfigMap, Namespace, PersistentVolumeClaim, Pod},
+    core::v1::{ConfigMap, Namespace, PersistentVolume, PersistentVolumeClaim, Pod},
 };
 use kube::{
     api::{Api, DeleteParams, ListParams, Meta, ObjectMeta, PostParams},
@@ -386,6 +386,70 @@ fn get_node_default_helm_path() -> String {
     } else {
         "/aptos/terraform/aptos-node-default-values.yaml".to_string()
     }
+}
+
+pub async fn reset_persistent_volumes(kube_client: &K8sClient) -> Result<()> {
+    let pv_api: Api<PersistentVolume> = Api::all(kube_client.clone());
+    let list_params = ListParams::default();
+    let _pvs = pv_api
+        .list(&list_params)
+        .await?
+        .items
+        .into_iter()
+        .filter(|pv| {
+            if let Some(status) = &pv.status {
+                if let Some(phase) = &status.phase {
+                    println!("{}", phase);
+                }
+            }
+            false
+        })
+        .collect::<Vec<PersistentVolume>>();
+
+    Ok(())
+}
+
+pub async fn annotate_persistent_volumes(
+    kube_client: K8sClient,
+    _kube_namespace: &str,
+    num_pvs_to_annotate: usize,
+    existing_db_tag: String,
+) -> Result<()> {
+    info!("Trying to get {} PVs.", num_pvs_to_annotate);
+    let pv_api: Api<PersistentVolume> = Api::all(kube_client.clone());
+    let list_params = ListParams::default();
+    let pvs = pv_api
+        .list(&list_params)
+        .await?
+        .items
+        .into_iter()
+        .filter(|pv| {
+            if let Some(labels) = &pv.metadata.labels {
+                if let Some(tag) = labels.get(&"tag".to_string()) {
+                    if tag == &existing_db_tag {
+                        return true;
+                    }
+                }
+            }
+            false
+        })
+        .take(num_pvs_to_annotate)
+        .collect::<Vec<PersistentVolume>>();
+
+    info!("Got the following PVs:");
+    for pv in &pvs {
+        println!("{}", pv.metadata.name.clone().map_or("".to_string(), |n| n));
+    }
+
+    if pvs.len() < num_pvs_to_annotate {
+        return Err(anyhow!(
+            "Could not find enough PVs, requested: {}, available: {}.",
+            num_pvs_to_annotate,
+            pvs.len()
+        ));
+    }
+
+    Ok(())
 }
 
 pub async fn install_testnet_resources(
