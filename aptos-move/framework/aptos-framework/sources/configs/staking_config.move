@@ -68,6 +68,14 @@ module aptos_framework::staking_config {
             error::invalid_argument(EINVALID_VOTING_POWER_INCREASE_LIMIT),
         );
 
+        // `rewards_rate` which is the numerator is limited to be less than 100 in order to avoid the arithmetic
+        // overflow in the rewards calculation. `rewards_rate_denominator` can be adjusted to get the desired rewards
+        // rate (rewards_rate / rewards_rate_denominator).
+        assert!(
+            rewards_rate < 100,
+            error::invalid_argument(EINVALID_REWARDS_RATE),
+        );
+
         move_to(aptos_framework, StakingConfig {
             minimum_stake,
             maximum_stake,
@@ -148,6 +156,13 @@ module aptos_framework::staking_config {
         assert!(
             new_rewards_rate_denominator > 0,
             error::invalid_argument(EZERO_REWARDS_RATE_DENOMINATOR),
+        );
+        // `rewards_rate` which is the numerator is limited to be less than 100 in order to avoid the arithmetic
+        // overflow in the rewards calculation. `rewards_rate_denominator` can be adjusted to get the desired rewards
+        // rate (rewards_rate / rewards_rate_denominator).
+        assert!(
+            new_rewards_rate < 100,
+            error::invalid_argument(EINVALID_REWARDS_RATE),
         );
         let staking_config = borrow_global_mut<StakingConfig>(@aptos_framework);
         staking_config.rewards_rate = new_rewards_rate;
