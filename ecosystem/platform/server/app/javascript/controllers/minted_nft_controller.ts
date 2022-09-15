@@ -115,8 +115,24 @@ export default class extends Controller {
         transaction.sender.slice(0, 4) + "…" + transaction.sender.slice(-4);
       this.addressTarget.title = transaction.sender;
     }
-    this.imageTargets.forEach((el) => {
-      el.src = imageUrl;
+    this.imageTargets.forEach((el: HTMLImageElement) => {
+      this.renderImage(el, mintNumber);
     });
   };
+
+  renderImage(imageEl: HTMLImageElement, mintNumber: number) {
+    const canvas = document.createElement("canvas");
+    canvas.width = imageEl.naturalWidth;
+    canvas.height = imageEl.naturalHeight;
+    canvas.style.width = `${imageEl.width}px`;
+    canvas.style.height = `${imageEl.height}px`;
+    imageEl.parentElement!.style.position = "relative";
+    imageEl.parentElement!.appendChild(canvas);
+    canvas.className = "absolute inset-0 pointer-events-none";
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.fillStyle = "white";
+    ctx.font = "normal 300 29px lft-etica-mono";
+    ctx.fillText(`#${mintNumber.toString().padStart(9, "0")}`, 422, 972);
+  }
 }
