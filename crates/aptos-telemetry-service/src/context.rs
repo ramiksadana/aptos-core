@@ -1,18 +1,20 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use std::collections::{HashMap, HashSet};
-use std::{convert::Infallible, sync::Arc};
+use std::{
+    collections::{HashMap, HashSet},
+    convert::Infallible,
+    sync::Arc,
+};
 
-use crate::validator_cache::PeerSetCache;
 use crate::{
-    clients::humio, clients::victoria_metrics_api::Client as MetricsClient, GCPBigQueryConfig,
-    TelemetryServiceConfig,
+    clients::{humio, victoria_metrics_api::Client as MetricsClient},
+    validator_cache::PeerSetCache,
+    GCPBigQueryConfig, TelemetryServiceConfig,
 };
 use aptos_crypto::{noise, x25519};
 use aptos_infallible::RwLock;
-use aptos_types::chain_id::ChainId;
-use aptos_types::PeerId;
+use aptos_types::{chain_id::ChainId, PeerId};
 use gcp_bigquery_client::Client as BQClient;
 use jsonwebtoken::{DecodingKey, EncodingKey};
 use warp::Filter;

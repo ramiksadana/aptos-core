@@ -12,13 +12,12 @@ use aptos_sdk::{
     types::account_address::AccountAddress,
 };
 use clap::Parser;
-use futures::stream::FuturesUnordered;
-use futures::StreamExt;
+use futures::{stream::FuturesUnordered, StreamExt};
 use log::{debug, info};
 use reqwest::{Client as ReqwestClient, Url};
 use serde::Serialize;
-use std::collections::HashMap;
 use std::{
+    collections::HashMap,
     sync::Arc,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };

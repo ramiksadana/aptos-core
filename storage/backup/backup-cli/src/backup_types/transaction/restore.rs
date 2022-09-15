@@ -1,7 +1,6 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::metrics::OTHER_TIMERS_SECONDS;
 use crate::{
     backup_types::{
         epoch_ending::restore::EpochHistory,
@@ -10,6 +9,7 @@ use crate::{
     metrics::{
         restore::{TRANSACTION_REPLAY_VERSION, TRANSACTION_SAVE_VERSION},
         verify::VERIFY_TRANSACTION_VERSION,
+        OTHER_TIMERS_SECONDS,
     },
     storage::{BackupStorage, FileHandle},
     utils::{

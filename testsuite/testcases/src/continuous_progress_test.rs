@@ -3,8 +3,10 @@
 
 use crate::NetworkLoadTest;
 use anyhow::bail;
-use forge::test_utils::consensus_utils::{no_failure_injection, test_consensus_fault_tolerance};
-use forge::{NetworkContext, NetworkTest, Result, Swarm, Test};
+use forge::{
+    test_utils::consensus_utils::{no_failure_injection, test_consensus_fault_tolerance},
+    NetworkContext, NetworkTest, Result, Swarm, Test,
+};
 use std::time::Duration;
 use tokio::runtime::Runtime;
 

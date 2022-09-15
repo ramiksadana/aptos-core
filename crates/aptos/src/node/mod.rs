@@ -3,52 +3,56 @@
 
 pub mod analyze;
 
-use crate::common::types::{
-    ConfigSearchMode, OptionalPoolAddressArgs, PromptOptions, TransactionSummary,
-};
-use crate::common::utils::prompt_yes_with_override;
-use crate::config::GlobalConfig;
-use crate::node::analyze::analyze_validators::AnalyzeValidators;
-use crate::node::analyze::fetch_metadata::FetchMetadata;
 use crate::{
     common::{
         types::{
-            CliCommand, CliError, CliResult, CliTypedResult, ProfileOptions, RestOptions,
-            TransactionOptions,
+            CliCommand, CliError, CliResult, CliTypedResult, ConfigSearchMode,
+            OptionalPoolAddressArgs, ProfileOptions, PromptOptions, RestOptions,
+            TransactionOptions, TransactionSummary,
         },
-        utils::read_from_file,
+        utils::{prompt_yes_with_override, read_from_file},
     },
+    config::GlobalConfig,
     genesis::git::from_yaml,
+    node::analyze::{analyze_validators::AnalyzeValidators, fetch_metadata::FetchMetadata},
 };
 use aptos_config::config::NodeConfig;
 use aptos_crypto::{bls12381, x25519, ValidCryptoMaterialStringExt};
 use aptos_faucet::FaucetArgs;
 use aptos_genesis::config::{HostAndPort, OperatorConfiguration};
-use aptos_types::chain_id::ChainId;
-use aptos_types::network_address::NetworkAddress;
-use aptos_types::on_chain_config::{ConsensusScheme, ValidatorSet};
-use aptos_types::validator_config::ValidatorConfig;
-use aptos_types::validator_info::ValidatorInfo;
-use aptos_types::{account_address::AccountAddress, account_config::CORE_CODE_ADDRESS};
+use aptos_types::{
+    account_address::AccountAddress,
+    account_config::CORE_CODE_ADDRESS,
+    chain_id::ChainId,
+    network_address::NetworkAddress,
+    on_chain_config::{ConsensusScheme, ValidatorSet},
+    validator_config::ValidatorConfig,
+    validator_info::ValidatorInfo,
+};
 use async_trait::async_trait;
-use backup_cli::coordinators::restore::{RestoreCoordinator, RestoreCoordinatorOpt};
-use backup_cli::metadata::cache::MetadataCacheOpt;
-use backup_cli::storage::command_adapter::{config::CommandAdapterConfig, CommandAdapter};
-use backup_cli::utils::{
-    ConcurrentDownloadsOpt, GlobalRestoreOpt, ReplayConcurrencyLevelOpt, RocksdbOpt,
+use backup_cli::{
+    coordinators::restore::{RestoreCoordinator, RestoreCoordinatorOpt},
+    metadata::cache::MetadataCacheOpt,
+    storage::command_adapter::{config::CommandAdapterConfig, CommandAdapter},
+    utils::{ConcurrentDownloadsOpt, GlobalRestoreOpt, ReplayConcurrencyLevelOpt, RocksdbOpt},
 };
 use cached_packages::aptos_stdlib;
 use clap::Parser;
 use hex::FromHex;
-use rand::rngs::StdRng;
-use rand::SeedableRng;
+use rand::{rngs::StdRng, SeedableRng};
 use reqwest::Url;
 use serde::Serialize;
-use std::collections::HashMap;
-use std::convert::{TryFrom, TryInto};
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
-use std::{path::PathBuf, thread, time::Duration};
+use std::{
+    collections::HashMap,
+    convert::{TryFrom, TryInto},
+    path::PathBuf,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
+    thread,
+    time::Duration,
+};
 use tokio::time::Instant;
 
 /// Tool for operations related to nodes

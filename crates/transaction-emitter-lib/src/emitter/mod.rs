@@ -8,8 +8,11 @@ pub mod submission_worker;
 use again::RetryPolicy;
 use anyhow::{anyhow, format_err, Result};
 use aptos_infallible::RwLock;
-use aptos_logger::sample::Sampling;
-use aptos_logger::{info, sample, sample::SampleRate, warn};
+use aptos_logger::{
+    info, sample,
+    sample::{SampleRate, Sampling},
+    warn,
+};
 use aptos_rest_client::Client as RestClient;
 use aptos_sdk::{
     move_types::account_address::AccountAddress,

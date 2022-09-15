@@ -1,54 +1,65 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::account::key_rotation::LookupAddress;
-use crate::account::{
-    create::{CreateAccount, DEFAULT_FUNDED_COINS},
-    fund::FundWithFaucet,
-    key_rotation::{RotateKey, RotateSummary},
-    list::{ListAccount, ListQuery},
-    transfer::{TransferCoins, TransferSummary},
+use crate::{
+    account::{
+        create::{CreateAccount, DEFAULT_FUNDED_COINS},
+        fund::FundWithFaucet,
+        key_rotation::{LookupAddress, RotateKey, RotateSummary},
+        list::{ListAccount, ListQuery},
+        transfer::{TransferCoins, TransferSummary},
+    },
+    common::{
+        init::InitTool,
+        types::{
+            account_address_from_public_key, AccountAddressWrapper, CliError, CliTypedResult,
+            EncodingOptions, FaucetOptions, GasOptions, KeyType, MoveManifestAccountWrapper,
+            MovePackageDir, OptionalPoolAddressArgs, PrivateKeyInputOptions, PromptOptions,
+            PublicKeyInputOptions, RestOptions, RngArgs, SaveFile, TransactionOptions,
+            TransactionSummary,
+        },
+        utils::write_to_file,
+    },
+    move_tool::{
+        ArgWithType, CompilePackage, DownloadPackage, IncludedArtifacts, InitPackage, MemberId,
+        PublishPackage, RunFunction, TestPackage,
+    },
+    node::{
+        AnalyzeMode, AnalyzeValidatorPerformance, InitializeValidator, JoinValidatorSet,
+        LeaveValidatorSet, OperatorArgs, OperatorConfigFileArgs, ShowValidatorConfig,
+        ShowValidatorSet, ShowValidatorStake, UpdateConsensusKey, UpdateValidatorNetworkAddresses,
+        ValidatorConsensusKeyArgs, ValidatorNetworkAddressesArgs,
+    },
+    op::key::{ExtractPeer, GenerateKey, NetworkKeyInputOptions, SaveKey},
+    stake::{
+        AddStake, IncreaseLockup, InitializeStakeOwner, SetDelegatedVoter, SetOperator,
+        UnlockStake, WithdrawStake,
+    },
+    CliCommand,
 };
-use crate::common::init::InitTool;
-use crate::common::types::{
-    account_address_from_public_key, AccountAddressWrapper, CliError, CliTypedResult,
-    EncodingOptions, FaucetOptions, GasOptions, KeyType, MoveManifestAccountWrapper,
-    MovePackageDir, OptionalPoolAddressArgs, PrivateKeyInputOptions, PromptOptions,
-    PublicKeyInputOptions, RestOptions, RngArgs, SaveFile, TransactionOptions, TransactionSummary,
-};
-use crate::common::utils::write_to_file;
-use crate::move_tool::{
-    ArgWithType, CompilePackage, DownloadPackage, IncludedArtifacts, InitPackage, MemberId,
-    PublishPackage, RunFunction, TestPackage,
-};
-use crate::node::{
-    AnalyzeMode, AnalyzeValidatorPerformance, InitializeValidator, JoinValidatorSet,
-    LeaveValidatorSet, OperatorArgs, OperatorConfigFileArgs, ShowValidatorConfig, ShowValidatorSet,
-    ShowValidatorStake, UpdateConsensusKey, UpdateValidatorNetworkAddresses,
-    ValidatorConsensusKeyArgs, ValidatorNetworkAddressesArgs,
-};
-use crate::op::key::{ExtractPeer, GenerateKey, NetworkKeyInputOptions, SaveKey};
-use crate::stake::{
-    AddStake, IncreaseLockup, InitializeStakeOwner, SetDelegatedVoter, SetOperator, UnlockStake,
-    WithdrawStake,
-};
-use crate::CliCommand;
 use aptos_config::config::Peer;
-use aptos_crypto::ed25519::Ed25519PublicKey;
-use aptos_crypto::{bls12381, ed25519::Ed25519PrivateKey, x25519, PrivateKey};
+use aptos_crypto::{
+    bls12381,
+    ed25519::{Ed25519PrivateKey, Ed25519PublicKey},
+    x25519, PrivateKey,
+};
 use aptos_genesis::config::HostAndPort;
 use aptos_keygen::KeyGen;
 use aptos_logger::warn;
 use aptos_rest_client::{aptos_api_types::MoveType, Transaction};
 use aptos_sdk::move_types::account_address::AccountAddress;
 use aptos_temppath::TempPath;
-use aptos_types::on_chain_config::ValidatorSet;
-use aptos_types::validator_config::ValidatorConfig;
+use aptos_types::{on_chain_config::ValidatorSet, validator_config::ValidatorConfig};
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
-use std::{collections::BTreeMap, mem, path::PathBuf, str::FromStr, time::Duration};
+use std::{
+    collections::{BTreeMap, HashMap},
+    mem,
+    path::PathBuf,
+    str::FromStr,
+    time::Duration,
+};
 use thiserror::private::PathAsDisplay;
 use tokio::time::{sleep, Instant};
 

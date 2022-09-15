@@ -14,9 +14,11 @@ use aptos_crypto::{
     ed25519::{Ed25519PrivateKey, Ed25519PublicKey},
     PrivateKey, SigningKey,
 };
-use aptos_rest_client::aptos_api_types::{AptosError, AptosErrorCode};
-use aptos_rest_client::error::{AptosErrorResponse, RestError};
-use aptos_rest_client::Client;
+use aptos_rest_client::{
+    aptos_api_types::{AptosError, AptosErrorCode},
+    error::{AptosErrorResponse, RestError},
+    Client,
+};
 use aptos_types::{
     account_address::AccountAddress, account_config::CORE_CODE_ADDRESS,
     transaction::authenticator::AuthenticationKey,

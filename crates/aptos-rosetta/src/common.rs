@@ -1,19 +1,21 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::types::{APTOS_COIN_MODULE, APTOS_COIN_RESOURCE};
 use crate::{
     error::{ApiError, ApiResult},
     types::{
         Currency, CurrencyMetadata, MetadataRequest, NetworkIdentifier, PartialBlockIdentifier,
+        APTOS_COIN_MODULE, APTOS_COIN_RESOURCE,
     },
     RosettaContext,
 };
 use aptos_crypto::{ValidCryptoMaterial, ValidCryptoMaterialStringExt};
 use aptos_logger::debug;
 use aptos_rest_client::{Account, Response};
-use aptos_sdk::move_types::ident_str;
-use aptos_sdk::move_types::language_storage::{StructTag, TypeTag};
+use aptos_sdk::move_types::{
+    ident_str,
+    language_storage::{StructTag, TypeTag},
+};
 use aptos_types::{account_address::AccountAddress, chain_id::ChainId};
 use futures::future::BoxFuture;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};

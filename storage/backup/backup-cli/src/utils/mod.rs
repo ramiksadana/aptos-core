@@ -19,16 +19,18 @@ use aptos_crypto::HashValue;
 use aptos_infallible::duration_since_epoch;
 use aptos_jellyfish_merkle::{NodeBatch, TreeWriter};
 use aptos_logger::info;
-use aptos_types::state_store::state_storage_usage::StateStorageUsage;
 use aptos_types::{
-    state_store::{state_key::StateKey, state_value::StateValue},
+    state_store::{
+        state_key::StateKey, state_storage_usage::StateStorageUsage, state_value::StateValue,
+    },
     transaction::Version,
     waypoint::Waypoint,
 };
-use aptosdb::state_restore::StateSnapshotProgress;
 use aptosdb::{
     backup::restore_handler::RestoreHandler,
-    state_restore::{StateSnapshotRestore, StateValueBatch, StateValueWriter},
+    state_restore::{
+        StateSnapshotProgress, StateSnapshotRestore, StateValueBatch, StateValueWriter,
+    },
     AptosDB, GetRestoreHandler,
 };
 use clap::Parser;

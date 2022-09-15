@@ -47,8 +47,11 @@ use futures::{channel::oneshot, FutureExt, StreamExt};
 use safety_rules::ConsensusState;
 use safety_rules::TSafetyRules;
 use serde::Serialize;
-use std::mem::discriminant;
-use std::{mem::Discriminant, sync::Arc, time::Duration};
+use std::{
+    mem::{discriminant, Discriminant},
+    sync::Arc,
+    time::Duration,
+};
 use tokio::time::{sleep, Instant};
 
 #[derive(Serialize, Clone)]

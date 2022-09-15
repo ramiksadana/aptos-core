@@ -5,44 +5,47 @@
 //!
 //! [Spec](https://www.rosetta-api.org/docs/api_objects.html)
 
-use crate::types::{
-    ACCOUNT_MODULE, ACCOUNT_RESOURCE, APTOS_ACCOUNT_MODULE, COIN_MODULE, COIN_STORE_RESOURCE,
-    CREATE_ACCOUNT_FUNCTION, SET_OPERATOR_FUNCTION, STAKE_MODULE, STAKE_POOL_RESOURCE,
-    TRANSFER_FUNCTION,
-};
 use crate::{
     common::{is_native_coin, native_coin},
     error::ApiResult,
     types::{
         AccountIdentifier, BlockIdentifier, Error, OperationIdentifier, OperationStatus,
-        OperationStatusType, OperationType, TransactionIdentifier,
+        OperationStatusType, OperationType, TransactionIdentifier, ACCOUNT_MODULE,
+        ACCOUNT_RESOURCE, APTOS_ACCOUNT_MODULE, COIN_MODULE, COIN_STORE_RESOURCE,
+        CREATE_ACCOUNT_FUNCTION, SET_OPERATOR_FUNCTION, STAKE_MODULE, STAKE_POOL_RESOURCE,
+        TRANSFER_FUNCTION,
     },
     ApiError, CoinCache,
 };
 use anyhow::anyhow;
 use aptos_crypto::{ed25519::Ed25519PublicKey, ValidCryptoMaterialStringExt};
 use aptos_logger::warn;
-use aptos_rest_client::aptos_api_types::TransactionOnChainData;
-use aptos_rest_client::{aptos::Balance, aptos_api_types::U64};
+use aptos_rest_client::{
+    aptos::Balance,
+    aptos_api_types::{TransactionOnChainData, U64},
+};
 use aptos_sdk::move_types::language_storage::TypeTag;
-use aptos_types::account_config::{AccountResource, CoinStoreResource, WithdrawEvent};
-use aptos_types::contract_event::ContractEvent;
-use aptos_types::stake_pool::StakePool;
-use aptos_types::state_store::state_key::StateKey;
-use aptos_types::transaction::{EntryFunction, TransactionPayload};
-use aptos_types::write_set::WriteOp;
-use aptos_types::{account_address::AccountAddress, event::EventKey};
+use aptos_types::{
+    account_address::AccountAddress,
+    account_config::{AccountResource, CoinStoreResource, WithdrawEvent},
+    contract_event::ContractEvent,
+    event::EventKey,
+    stake_pool::StakePool,
+    state_store::state_key::StateKey,
+    transaction::{EntryFunction, TransactionPayload},
+    write_set::WriteOp,
+};
 use cached_packages::aptos_stdlib;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
-use std::cmp::Ordering;
-use std::sync::Arc;
 use std::{
+    cmp::Ordering,
     collections::HashMap,
     convert::{TryFrom, TryInto},
     fmt::{Display, Formatter},
     hash::Hash,
     str::FromStr,
+    sync::Arc,
 };
 
 /// A description of all types used by the Rosetta implementation.

@@ -1,8 +1,8 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::evaluator::EvaluationResult;
 use crate::{
+    evaluator::EvaluationResult,
     evaluators::{
         direct::{
             get_node_identity, HandshakeEvaluatorArgs, LatencyEvaluatorArgs,
@@ -28,8 +28,7 @@ use once_cell::sync::Lazy;
 use poem_openapi::{types::Example, Object as PoemObject};
 use reqwest::cookie::Jar;
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 use url::Url;
 
 pub const DEFAULT_METRICS_PORT: u16 = 9101;

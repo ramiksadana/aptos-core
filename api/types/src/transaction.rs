@@ -23,8 +23,7 @@ use aptos_types::{
 };
 
 use poem_openapi::{Object, Union};
-use serde::de::Error;
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{de::Error, Deserialize, Deserializer, Serialize};
 use std::{
     boxed::Box,
     convert::{From, Into, TryFrom, TryInto},
@@ -1170,8 +1169,10 @@ pub struct GasEstimation {
 
 #[cfg(test)]
 mod test {
-    use crate::transaction::{CompatibleEvent, CompatibleVersionedEvent};
-    use crate::{Event, EventGuid, MoveType, VersionedEvent, U64};
+    use crate::{
+        transaction::{CompatibleEvent, CompatibleVersionedEvent},
+        Event, EventGuid, MoveType, VersionedEvent, U64,
+    };
     use aptos_types::account_address::AccountAddress;
 
     #[test]

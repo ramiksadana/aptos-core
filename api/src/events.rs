@@ -3,21 +3,27 @@
 
 use std::sync::Arc;
 
-use crate::accept_type::AcceptType;
-use crate::accounts::Account;
-use crate::context::Context;
-use crate::failpoint::fail_point_poem;
-use crate::page::Page;
-use crate::response::{
-    BasicErrorWith404, BasicResponse, BasicResponseStatus, BasicResultWith404, InternalError,
+use crate::{
+    accept_type::AcceptType,
+    accounts::Account,
+    context::Context,
+    failpoint::fail_point_poem,
+    page::Page,
+    response::{
+        BasicErrorWith404, BasicResponse, BasicResponseStatus, BasicResultWith404, InternalError,
+    },
+    ApiTags,
 };
-use crate::ApiTags;
 use anyhow::Context as AnyhowContext;
-use aptos_api_types::{Address, AptosErrorCode, IdentifierWrapper, LedgerInfo, MoveStructTag, U64};
-use aptos_api_types::{AsConverter, EventKey as EventKeyParam, VersionedEvent};
+use aptos_api_types::{
+    Address, AptosErrorCode, AsConverter, EventKey as EventKeyParam, IdentifierWrapper, LedgerInfo,
+    MoveStructTag, VersionedEvent, U64,
+};
 use aptos_types::event::EventKey;
-use poem_openapi::param::Query;
-use poem_openapi::{param::Path, OpenApi};
+use poem_openapi::{
+    param::{Path, Query},
+    OpenApi,
+};
 
 pub struct EventsApi {
     pub context: Arc<Context>,

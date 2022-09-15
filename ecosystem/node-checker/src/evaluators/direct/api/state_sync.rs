@@ -1,8 +1,7 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use super::super::DirectEvaluatorInput;
-use super::ApiEvaluatorError;
+use super::{super::DirectEvaluatorInput, ApiEvaluatorError};
 use crate::{
     configuration::EvaluatorArgs,
     evaluator::{EvaluationResult, Evaluator},

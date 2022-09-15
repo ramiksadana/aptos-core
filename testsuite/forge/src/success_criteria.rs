@@ -6,8 +6,7 @@ use serde::Serialize;
 use std::time::Duration;
 use transaction_emitter_lib::emitter::stats::TxnStats;
 
-use crate::system_metrics::SystemMetricsThreshold;
-use crate::{Swarm, SwarmExt};
+use crate::{system_metrics::SystemMetricsThreshold, Swarm, SwarmExt};
 
 #[derive(Default, Clone, Debug, Serialize)]
 pub struct SuccessCriteria {

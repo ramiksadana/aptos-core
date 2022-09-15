@@ -6,27 +6,28 @@
 //! See: [Account API Spec](https://www.rosetta-api.org/docs/AccountApi.html)
 //!
 
-use crate::types::{
-    AccountBalanceMetadata, ACCOUNT_MODULE, ACCOUNT_RESOURCE, COIN_MODULE, COIN_STORE_RESOURCE,
-};
 use crate::{
     common::{
         check_network, get_block_index_from_request, handle_request, native_coin, native_coin_tag,
         with_context,
     },
     error::{ApiError, ApiResult},
-    types::{AccountBalanceRequest, AccountBalanceResponse, Amount, Currency, CurrencyMetadata},
+    types::{
+        AccountBalanceMetadata, AccountBalanceRequest, AccountBalanceResponse, Amount, Currency,
+        CurrencyMetadata, ACCOUNT_MODULE, ACCOUNT_RESOURCE, COIN_MODULE, COIN_STORE_RESOURCE,
+    },
     RosettaContext,
 };
 use aptos_logger::{debug, trace};
 use aptos_sdk::move_types::language_storage::TypeTag;
-use aptos_types::account_address::AccountAddress;
-use aptos_types::account_config::{AccountResource, CoinInfoResource, CoinStoreResource};
+use aptos_types::{
+    account_address::AccountAddress,
+    account_config::{AccountResource, CoinInfoResource, CoinStoreResource},
+};
 use once_cell::sync::Lazy;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
-use std::collections::BTreeMap;
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{BTreeMap, HashMap, HashSet},
     sync::{Arc, RwLock},
 };
 use warp::Filter;

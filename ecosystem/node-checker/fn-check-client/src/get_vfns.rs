@@ -17,13 +17,13 @@ use log::info;
 use reqwest::Url;
 use std::collections::HashMap;
 
-use crate::check::CouldNotDeserializeNetworkAddress;
-use crate::check::IncompleteNetworkAddress;
-use crate::check::NoVfnRegistered;
-use crate::check::NodeInfo;
-use crate::check::SingleCheck;
-use crate::check::SingleCheckResult;
-use crate::helpers::extract_network_address;
+use crate::{
+    check::{
+        CouldNotDeserializeNetworkAddress, IncompleteNetworkAddress, NoVfnRegistered, NodeInfo,
+        SingleCheck, SingleCheckResult,
+    },
+    helpers::extract_network_address,
+};
 
 #[derive(Debug, Parser)]
 pub struct GetValidatorFullNodes {

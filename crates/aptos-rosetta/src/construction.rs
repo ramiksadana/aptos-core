@@ -24,11 +24,10 @@
 //! a connection to a full node.  The online ones need a connection to a full node.
 //!
 
-use crate::common::{native_coin_tag, parse_currency};
 use crate::{
     common::{
         check_network, decode_bcs, decode_key, encode_bcs, get_account, handle_request,
-        native_coin, with_context,
+        native_coin, native_coin_tag, parse_currency, with_context,
     },
     error::{ApiError, ApiResult},
     types::{InternalOperation, *},
@@ -49,8 +48,10 @@ use aptos_types::{
         authenticator::AuthenticationKey, RawTransaction, SignedTransaction, TransactionPayload,
     },
 };
-use std::convert::TryFrom;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::{
+    convert::TryFrom,
+    time::{SystemTime, UNIX_EPOCH},
+};
 use warp::Filter;
 
 pub fn combine_route(

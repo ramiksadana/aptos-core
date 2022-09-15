@@ -2,22 +2,29 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use aptos_config::config::{Peer, PeerRole, PeerSet, RoleType};
-use aptos_crypto::noise::{InitiatorHandshakeState, NoiseConfig};
-use aptos_crypto::{noise, x25519, Uniform};
-use aptos_types::network_address::Protocol::{Dns, Handshake, NoiseIK, Tcp};
+use aptos_crypto::{
+    noise,
+    noise::{InitiatorHandshakeState, NoiseConfig},
+    x25519, Uniform,
+};
 use aptos_types::{
     account_address,
     chain_id::ChainId,
-    network_address::{DnsName, NetworkAddress},
+    network_address::{
+        DnsName, NetworkAddress,
+        Protocol::{Dns, Handshake, NoiseIK, Tcp},
+    },
     PeerId,
 };
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use serde_json::json;
 
-use crate::types::common::NodeType;
 use crate::{
     tests::test_context::new_test_context,
-    types::auth::{AuthResponse, Claims},
+    types::{
+        auth::{AuthResponse, Claims},
+        common::NodeType,
+    },
 };
 
 fn init(

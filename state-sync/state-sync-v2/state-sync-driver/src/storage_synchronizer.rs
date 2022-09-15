@@ -1,11 +1,11 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::metrics;
 use crate::{
     error::Error,
     logging::{LogEntry, LogSchema},
     metadata_storage::MetadataStorageInterface,
+    metrics,
     notification_handlers::{
         CommitNotification, CommittedTransactions, ErrorNotification, MempoolNotificationHandler,
     },
@@ -14,22 +14,25 @@ use crate::{
 use aptos_config::config::StateSyncDriverConfig;
 use aptos_infallible::Mutex;
 use aptos_logger::prelude::*;
-use aptos_types::state_store::state_key::StateKey;
-use aptos_types::state_store::state_value::StateValue;
-use aptos_types::transaction::Version;
 use aptos_types::{
     ledger_info::LedgerInfoWithSignatures,
-    state_store::state_value::StateValueChunkWithProof,
+    state_store::{
+        state_key::StateKey,
+        state_value::{StateValue, StateValueChunkWithProof},
+    },
     transaction::{
         Transaction, TransactionListWithProof, TransactionOutput, TransactionOutputListWithProof,
+        Version,
     },
 };
 use async_trait::async_trait;
 use data_streaming_service::data_notification::NotificationId;
 use event_notifications::EventSubscriptionService;
 use executor_types::ChunkExecutorTrait;
-use futures::channel::mpsc::UnboundedSender;
-use futures::{channel::mpsc, SinkExt, StreamExt};
+use futures::{
+    channel::{mpsc, mpsc::UnboundedSender},
+    SinkExt, StreamExt,
+};
 use mempool_notifications::MempoolNotificationSender;
 use std::{
     future::Future,

@@ -1,9 +1,11 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::block_storage::tracing::{observe_block, BlockStage};
 use crate::{
-    block_storage::BlockStore,
+    block_storage::{
+        tracing::{observe_block, BlockStage},
+        BlockStore,
+    },
     commit_notifier::CommitNotifier,
     counters,
     error::{error_kind, DbError},

@@ -3,20 +3,22 @@
 
 use crate::*;
 use rand::{Rng, SeedableRng};
-use std::fmt::{Display, Formatter};
-use std::sync::Arc;
-use std::time::Duration;
 use std::{
+    fmt::{Display, Formatter},
     io::{self, Write},
     num::NonZeroUsize,
     process,
+    sync::Arc,
+    time::Duration,
 };
 use structopt::{clap::arg_enum, StructOpt};
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 use tokio::runtime::Runtime;
 // TODO going to remove random seed once cluster deployment supports re-run genesis
-use crate::success_criteria::SuccessCriteria;
-use crate::system_metrics::{MetricsThreshold, SystemMetricsThreshold};
+use crate::{
+    success_criteria::SuccessCriteria,
+    system_metrics::{MetricsThreshold, SystemMetricsThreshold},
+};
 use framework::ReleaseBundle;
 use rand::rngs::OsRng;
 

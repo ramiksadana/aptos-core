@@ -8,8 +8,10 @@ use chrono::Utc;
 use core::time;
 use futures::future::join_all;
 use itertools::Itertools;
-use std::time::Duration;
-use std::{collections::HashSet, time::Instant};
+use std::{
+    collections::HashSet,
+    time::{Duration, Instant},
+};
 
 use crate::{wait_for_all_nodes_to_catchup_to_version, Swarm, SwarmExt};
 

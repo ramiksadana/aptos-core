@@ -17,8 +17,10 @@ use move_deps::{
     move_vm_types::loaded_data::runtime_types::Type,
 };
 use once_cell::sync::Lazy;
-use std::collections::BTreeMap;
-use std::io::{Cursor, Read};
+use std::{
+    collections::BTreeMap,
+    io::{Cursor, Read},
+};
 
 // A map which contains the structs allowed as transaction input and the
 // validation function for those, if one was needed (None otherwise).

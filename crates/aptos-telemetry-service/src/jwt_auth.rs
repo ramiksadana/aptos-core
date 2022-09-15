@@ -10,8 +10,11 @@ use warp::{
     reject, Rejection,
 };
 
-use crate::{context::Context, types::auth::Claims};
-use crate::{error::ServiceError, types::common::NodeType};
+use crate::{
+    context::Context,
+    error::ServiceError,
+    types::{auth::Claims, common::NodeType},
+};
 
 const BEARER: &str = "BEARER ";
 
@@ -114,8 +117,7 @@ mod tests {
 
     use std::collections::HashMap;
 
-    use super::super::tests::test_context;
-    use super::*;
+    use super::{super::tests::test_context, *};
 
     #[tokio::test]
     async fn jwt_from_header_valid_bearer() {

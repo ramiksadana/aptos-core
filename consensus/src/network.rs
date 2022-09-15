@@ -1,8 +1,8 @@
 // Copyright (c) Aptos
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::block_storage::tracing::{observe_block, BlockStage};
 use crate::{
+    block_storage::tracing::{observe_block, BlockStage},
     counters,
     logging::LogEvent,
     monitor,

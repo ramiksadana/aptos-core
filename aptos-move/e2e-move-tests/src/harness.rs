@@ -3,34 +3,35 @@
 
 use crate::AptosPackageHooks;
 use aptos::move_tool::MemberId;
-use aptos_crypto::ed25519::Ed25519PrivateKey;
-use aptos_crypto::{PrivateKey, Uniform};
+use aptos_crypto::{ed25519::Ed25519PrivateKey, PrivateKey, Uniform};
 use aptos_gas::{AptosGasParameters, InitialGasSchedule, ToOnChainGasSchedule};
-use aptos_types::on_chain_config::GasSchedule;
 use aptos_types::{
     access_path::AccessPath,
     account_address::AccountAddress,
+    on_chain_config::GasSchedule,
     state_store::state_key::StateKey,
     transaction::{EntryFunction, SignedTransaction, TransactionPayload, TransactionStatus},
 };
 use cached_packages::aptos_stdlib;
-use framework::natives::code::PackageMetadata;
-use framework::{BuildOptions, BuiltPackage};
+use framework::{natives::code::PackageMetadata, BuildOptions, BuiltPackage};
 use language_e2e_tests::{
     account::{Account, AccountData},
     executor::FakeExecutor,
 };
-use move_deps::move_core_types::language_storage::{ResourceKey, StructTag, TypeTag};
-use move_deps::move_core_types::value::MoveValue;
-use move_deps::move_package::package_hooks::register_package_hooks;
+use move_deps::{
+    move_core_types::{
+        language_storage::{ResourceKey, StructTag, TypeTag},
+        value::MoveValue,
+    },
+    move_package::package_hooks::register_package_hooks,
+};
 use project_root::get_project_root;
 use rand::{
     rngs::{OsRng, StdRng},
     Rng, SeedableRng,
 };
 use serde::de::DeserializeOwned;
-use std::collections::BTreeMap;
-use std::path::Path;
+use std::{collections::BTreeMap, path::Path};
 
 /// A simple test harness for defining Move e2e tests.
 ///

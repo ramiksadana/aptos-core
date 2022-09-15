@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use aptos_types::account_address::AccountAddress;
-use e2e_move_tests::package_builder::PackageBuilder;
-use e2e_move_tests::{assert_success, assert_vm_status, MoveHarness};
+use e2e_move_tests::{
+    assert_success, assert_vm_status, package_builder::PackageBuilder, MoveHarness,
+};
 use move_deps::move_core_types::vm_status::StatusCode;
 
 #[test]

@@ -6,13 +6,14 @@ use anyhow::{bail, Context};
 use aptos_logger::{info, warn};
 use aptos_rest_client::error::RestError;
 use aptos_sdk::types::account_config::CORE_CODE_ADDRESS;
-use forge::test_utils::consensus_utils::{
-    test_consensus_fault_tolerance, FailPointFailureInjection, NodeState,
+use forge::{
+    test_utils::consensus_utils::{
+        test_consensus_fault_tolerance, FailPointFailureInjection, NodeState,
+    },
+    NetworkContext, NetworkTest, Result, Swarm, SwarmExt, Test,
 };
-use forge::{NetworkContext, NetworkTest, Result, Swarm, SwarmExt, Test};
 use rand::Rng;
-use std::collections::HashSet;
-use std::time::Duration;
+use std::{collections::HashSet, time::Duration};
 use tokio::runtime::Runtime;
 
 pub struct ChangingWorkingQuorumTest {

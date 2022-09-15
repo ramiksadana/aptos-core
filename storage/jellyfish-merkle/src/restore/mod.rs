@@ -26,8 +26,14 @@ use aptos_types::{
     transaction::Version,
 };
 use itertools::Itertools;
-use std::sync::mpsc::{sync_channel, Receiver, SyncSender};
-use std::{cmp::Eq, collections::HashMap, sync::Arc};
+use std::{
+    cmp::Eq,
+    collections::HashMap,
+    sync::{
+        mpsc::{sync_channel, Receiver, SyncSender},
+        Arc,
+    },
+};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 enum ChildInfo<K> {

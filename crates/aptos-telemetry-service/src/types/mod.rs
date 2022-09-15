@@ -10,8 +10,7 @@ pub mod common {
     use std::fmt;
 
     use crate::types::auth::Claims;
-    use aptos_types::chain_id::ChainId;
-    use aptos_types::PeerId;
+    use aptos_types::{chain_id::ChainId, PeerId};
     use serde::{Deserialize, Serialize};
 
     #[derive(Debug, Serialize, Deserialize, Clone)]

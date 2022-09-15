@@ -14,9 +14,7 @@ use gcp_bigquery_client::{
 };
 use log::info;
 use serde::Serialize;
-use std::collections::HashMap;
-use std::convert::TryFrom;
-use std::path::PathBuf;
+use std::{collections::HashMap, convert::TryFrom, path::PathBuf};
 
 use crate::check::SingleCheck;
 
