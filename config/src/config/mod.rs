@@ -4,7 +4,7 @@
 use crate::network_id::NetworkId;
 use aptos_secure_storage::{KVStorage, Storage};
 use aptos_types::{waypoint::Waypoint, PeerId};
-use rand::{rngs::StdRng, SeedableRng};
+use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::{
     collections::{HashMap, HashSet},
@@ -403,6 +403,20 @@ impl NodeConfig {
         Ok(())
     }
 
+    pub fn randomize_chunk_size(&mut self) {
+        self.state_sync.storage_service.max_state_chunk_size = random_number();
+        self.state_sync.storage_service.max_transaction_output_chunk_size = random_number();
+        self.state_sync.storage_service.max_transaction_chunk_size = random_number();
+    }
+
+    pub fn randomize_data_dir(&mut self) {
+        let data_dir_number: u64 = random_number();
+        let new_data_dir = self.base.data_dir.join(format!("{:?}", data_dir_number));
+        println!("Randomizing the data dir with: {:?}", new_data_dir);
+        self.base.data_dir = new_data_dir.clone();
+        self.storage.dir = new_data_dir;
+    }
+
     pub fn randomize_ports(&mut self) {
         self.api.randomize_ports();
         self.inspection_service.randomize_ports();
@@ -557,6 +571,11 @@ impl RootPath {
             file_path.to_path_buf()
         }
     }
+}
+
+fn random_number() -> u64 {
+    let mut rng = thread_rng();
+    rng.gen_range(1, 2000)
 }
 
 #[cfg(test)]

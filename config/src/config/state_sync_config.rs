@@ -78,7 +78,7 @@ impl Default for StateSyncDriverConfig {
             continuous_syncing_mode: ContinuousSyncingMode::ApplyTransactionOutputs,
             progress_check_interval_ms: 100,
             max_connection_deadline_secs: 10,
-            max_consecutive_stream_notifications: 10,
+            max_consecutive_stream_notifications: 10000,
             max_pending_data_chunks: 100,
             max_stream_wait_time_ms: 5000,
             num_versions_to_skip_snapshot_sync: 100_000_000, // At 5k TPS, this allows a node to fail for about 6 hours.

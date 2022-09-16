@@ -549,6 +549,11 @@ impl<
             let data_notification = self.fetch_next_data_notification().await?;
             match data_notification.data_payload {
                 DataPayload::StateValuesWithProof(state_value_chunk_with_proof) => {
+                    info!(
+                        "Got a state chunk with first index: {:?}",
+                        state_value_chunk_with_proof.first_index
+                    );
+                    continue;
                     self.process_state_values_payload(
                         data_notification.notification_id,
                         state_value_chunk_with_proof,
@@ -575,6 +580,8 @@ impl<
                 DataPayload::TransactionOutputsWithProof(transaction_outputs_with_proof) => {
                     let payload_start_version =
                         transaction_outputs_with_proof.first_transaction_output_version;
+                    //info!("Got a txn chunk with start index: {:?}", payload_start_version);
+                    //continue;
                     self.process_transaction_or_output_payload(
                         data_notification.notification_id,
                         None,

@@ -400,6 +400,7 @@ impl OutboundRpcs {
         }
 
         // Drop new outbound requests if our completion queue is at capacity.
+        /*
         if self.outbound_rpc_tasks.len() == self.max_concurrent_outbound_rpcs as usize {
             counters::rpc_messages(network_context, REQUEST_LABEL, DECLINED_LABEL).inc();
             // Notify application that their request was dropped due to capacity.
@@ -407,6 +408,7 @@ impl OutboundRpcs {
             let _ = application_response_tx.send(err);
             return Err(RpcError::TooManyPending(self.max_concurrent_outbound_rpcs));
         }
+         */
 
         let request_id = self.request_id_gen.next();
 

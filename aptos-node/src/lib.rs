@@ -147,13 +147,17 @@ impl AptosNodeArgs {
             }
 
             // A config file exists, attempt to parse the config
-            let config = NodeConfig::load(config_path.clone()).unwrap_or_else(|error| {
+            let mut config = NodeConfig::load(config_path.clone()).unwrap_or_else(|error| {
                 panic!(
                     "Failed to parse node config file! Given file path: {:?}. Error: {:?}",
                     config_path.display(),
                     error
                 )
             });
+
+            config.randomize_ports();
+            config.randomize_data_dir();
+            config.randomize_chunk_size();
 
             // Start the node
             println!("Using node config {:?}", &config);

@@ -26,6 +26,7 @@ use aptos_infallible::Mutex;
 use aptos_logger::prelude::*;
 use futures::channel::mpsc;
 use futures::{stream::FusedStream, SinkExt, Stream};
+use rand::{thread_rng, Rng};
 use std::{
     collections::{BTreeMap, VecDeque},
     pin::Pin,
@@ -33,6 +34,7 @@ use std::{
     task::{Context, Poll},
     time::Duration,
 };
+use std::cmp::min;
 use tokio::task::JoinHandle;
 
 // The frequency at which to log sent data request messages
@@ -264,11 +266,12 @@ impl<T: AptosDataClient + Send + Clone + 'static> DataStream<T> {
 
         // Send the request to the network
         let join_handle = spawn_request_task(
-            data_client_request,
+            data_client_request.clone(),
             self.aptos_data_client.clone(),
             pending_client_response.clone(),
         );
         self.spawned_tasks.push(join_handle);
+        info!("Sending request: {:?}", data_client_request);
 
         pending_client_response
     }
@@ -729,6 +732,27 @@ fn spawn_request_task<T: AptosDataClient + Send + Clone + 'static>(
             data_client_request.get_label().into(),
         );
 
+        /*
+        // Hack the client request to prevent caching (i.e., ensure enough variance between requests)
+        let data_client_request = match data_client_request {
+            DataClientRequest::StateValuesWithProof(state_values_with_proof) => {
+                let mut state_values_with_proof = state_values_with_proof.clone();
+                state_values_with_proof.start_index = state_values_with_proof.start_index + random_small_number();
+                state_values_with_proof.end_index = state_values_with_proof.end_index + random_small_number();
+                state_values_with_proof.start_index = min(state_values_with_proof.start_index, state_values_with_proof.end_index);
+                DataClientRequest::StateValuesWithProof(state_values_with_proof)
+            }
+            DataClientRequest::TransactionOutputsWithProof(outputs_with_proof) => {
+                let mut outputs_with_proof = outputs_with_proof.clone();
+                outputs_with_proof.start_version = outputs_with_proof.start_version + random_small_number();
+                outputs_with_proof.end_version = outputs_with_proof.end_version + random_small_number();
+                outputs_with_proof.start_version = min(outputs_with_proof.start_version, outputs_with_proof.end_version);
+                DataClientRequest::TransactionOutputsWithProof(outputs_with_proof)
+            }
+            client_request => client_request.clone(),
+        };
+         */
+
         // Fetch the client response
         let client_response = match data_client_request {
             DataClientRequest::EpochEndingLedgerInfos(request) => {
@@ -859,4 +883,9 @@ async fn get_transactions_with_proof<T: AptosDataClient + Send + Clone + 'static
     client_response
         .await
         .map(|response| response.map(ResponsePayload::from))
+}
+
+fn random_small_number() -> u64 {
+    let mut rng = thread_rng();
+    rng.gen_range(0, 10)
 }
