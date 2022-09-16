@@ -4,6 +4,7 @@
 use super::common::NAMESPACE;
 use aptos_infallible::Mutex;
 use aptos_metrics_core::const_metric::ConstMetric;
+use procfs::KernelStats;
 use prometheus::{
     core::{Collector, Desc, Describer},
     proto::MetricFamily,
@@ -18,6 +19,8 @@ const SYSTEM_CPU_INFO: &str = "system_cpu_info";
 const CPU_ID_LABEL: &str = "cpu_id";
 const CPU_BRAND_LABEL: &str = "brand";
 const CPU_VENDOR_LABEL: &str = "vendor";
+
+const LINUX_SYSTEM_CPU_USAGE: &str = "linux_system_cpu_usage";
 
 /// A Collector for exposing CPU metrics
 pub(crate) struct CpuMetricsCollector {
@@ -108,6 +111,32 @@ impl Collector for CpuMetricsCollector {
         mfs.extend(cpu_info.collect());
 
         mfs
+    }
+}
+
+struct LinuxCpuMetricsCollector {
+    cpu: Desc,
+}
+
+impl LinuxCpuMetricsCollector {
+    fn new() -> Self {
+        let cpu = Opts::new(LINUX_SYSTEM_CPU_USAGE, "Linux CPU usage.")
+            .namespace(NAMESPACE)
+            .variable_label(LINUX_SYSTEM_CPU_USAGE)
+            .describe()
+            .unwrap();
+
+        Self { cpu }
+    }
+}
+
+impl Collector for LinuxCpuMetricsCollector {
+    fn desc(&self) -> Vec<&Desc> {
+        todo!()
+    }
+
+    fn collect(&self) -> Vec<MetricFamily> {
+        let kernel_stats = KernelStats::new()?;
     }
 }
 

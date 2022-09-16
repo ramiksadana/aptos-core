@@ -173,7 +173,36 @@ impl Collector for ProcessMetricsCollector {
         mfs.extend(total_read_bytes.collect());
         mfs.extend(total_written_bytes.collect());
 
+        cfg_if! {
+            if #[cfg(all(feature = "process", target_os="linux"))] {
+
+            }
+        }
+
         mfs
+    }
+}
+
+/// A Collector for exposing process metrics
+pub(crate) struct LinuxProcessMetricsCollector {}
+
+impl LinuxProcessMetricsCollector {
+    fn new() -> Self {
+        Self {}
+    }
+}
+
+impl Collector for LinuxProcessMetricsCollector {
+    fn desc(&self) -> Vec<&Desc> {
+        todo!()
+    }
+
+    fn collect(&self) -> Vec<MetricFamily> {
+        let process = procfs::process::Process::myself();
+
+        if let Ok(process) = process {
+            process.stat().unwrap().nice
+        }
     }
 }
 
